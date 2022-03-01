@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmj.park.dao.ParkMapper">
+    <!-- 根据关键字查询车位信息 -->
+    <select id="selectNew" resultMap="parkMsgResultMap">
+        SELECT *
+        FROM t_park_msg
+        <where>
+            <if test="parkNumber != null and parkNumber != ''">
+                and park_number like CONCAT('%', #{parkNumber},'%') or park_area like CONCAT('%',
+                #{parkNumber},'%')
+            </if>
+            <if test="carNumber == 'nullCar'">
+                and park_car_number is null
+            </if>
+        </where>
+        ORDER BY park_number ASC
+    </select>
+    <resultMap id="parkMsgResultMap" type="ParkMsg">
+        <result property="note" column="park_note"/>
+        <result property="fee" column="park_fee"/>
+        <result property="carNumber" column="park_car_number"/>
+    </resultMap>
+
+    <!--插入车位信息-->
+    <insert id="insert" parameterType="ParkMsg" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO t_park_msg(park_number, park_area, park_fee, park_note)
+        VALUES (#{parkNumber}, #{parkArea}, #{fee}, #{note})
+    </insert>
+
+    <!--更新车位预约-->
+    <update id="update" parameterType="ParkMsg">
+        update t_park_msg
+        set park_car_number = #{carNumber}
+        where id = #{id}
+    </update>
+
+    <!--更新车位信息-->
+    <update id="updatePark" parameterType="ParkMsg">
+        update t_park_msg
+        set park_number = #{parkNumber},
+            park_area   = #{parkArea},
+            park_fee    = #{fee},
+            park_note   = #{note}
+        where id = #{id}
+    </update>
+
+</mapper>

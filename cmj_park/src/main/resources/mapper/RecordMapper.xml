@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmj.park.dao.RecordMapper">
+    <!-- 根据关键词查询记录 -->
+    <select id="selectNew" resultMap="recordMsgResultMap">
+        select * from cmj_park.t_park_record
+        <where>
+            <if test="owner != null and owner != ''">and record_owner = #{owner}</if>
+            <if test="carNumber != null and carNumber != ''">
+                and record_car_number like CONCAT('%', #{carNumber},'%')
+            </if>
+        </where>
+        ORDER BY id ASC
+    </select>
+    <resultMap id="recordMsgResultMap" type="RecordMsg">
+        <result property="carNumber" column="record_car_number"/>
+        <result property="carStart" column="record_time_start"/>
+        <result property="carEnd" column="record_time_end"/>
+        <result property="hourMoney" column="record_hour_money"/>
+        <result property="time" column="record_time"/>
+        <result property="money" column="record_money"/>
+        <result property="owner" column="record_owner"/>
+    </resultMap>
+
+    <!--添加停车记录-->
+    <insert id="addRecord" parameterType="RecordMsg">
+        insert into t_park_record(record_car_number, record_time_start, record_time_end, record_hour_money, record_time,
+                                  record_money, record_owner)
+            value (#{carNumber},#{carStart},#{carEnd},#{hourMoney},#{time},#{money},#{owner})
+    </insert>
+
+</mapper>
